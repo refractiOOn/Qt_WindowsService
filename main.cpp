@@ -37,8 +37,10 @@ int main(int argc, char **argv)
     
     const QString action = parser.value(actionOption);
 
-    // if (action == "install") installService(argv[0], serviceName);
-    if (action == "install") installService(serviceName, displayName, startType);
+    const std::string exec(argv[0]);
+    const std::wstring wideExec(exec.cbegin(), exec.cend());
+
+    if (action == "install") installService(wideExec, serviceName, displayName, startType);
     else if (action == "uninstall") uninstallService(serviceName);
     else qDebug() << "Invalid action value. Print --help to get argument info";
 

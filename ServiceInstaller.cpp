@@ -2,7 +2,8 @@
 #include <QScopeGuard>
 #include <iostream>
 
-void installService(const std::wstring &serviceName,
+void installService(const std::wstring &execPath,
+                    const std::wstring &serviceName,
                     const std::wstring &displayName,
                     DWORD startType)
 {
@@ -21,36 +22,17 @@ void installService(const std::wstring &serviceName,
         }
     });
 
-    wchar_t path[MAX_PATH];
-
-    if (GetModuleFileNameW(NULL, path, ARRAYSIZE(path)) == 0)
-    {
-        std::wcerr << "GetModuleFileNameW failed" << std::endl;
-        return;
-    }
-
-    manager = OpenSCManager(NULL,
-                            NULL,
-                            SC_MANAGER_CONNECT | SC_MANAGER_CREATE_SERVICE);
+    manager = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT | SC_MANAGER_CREATE_SERVICE);
     if (!manager)
     {
         std::wcerr << "OpenSCManager failed" << std::endl;
         return;
     }
 
-    service = CreateServiceW(manager,
-                             serviceName.c_str(),
-                             displayName.c_str(),
-                             SERVICE_QUERY_STATUS,
-                             SERVICE_WIN32_OWN_PROCESS,
-                             startType,
-                             SERVICE_ERROR_NORMAL,
-                             path,
-                             NULL,
-                             NULL,
-                             NULL,
-                             NULL,
-                             NULL);
+    service = CreateServiceW(manager, serviceName.c_str(), displayName.c_str(),
+                             SERVICE_QUERY_STATUS, SERVICE_WIN32_OWN_PROCESS,
+                             startType, SERVICE_ERROR_NORMAL, execPath.c_str(),
+                             NULL, NULL, NULL, NULL, NULL);
     if (!service)
     {
         std::wcerr << "CreateServiceW failed" << std::endl;

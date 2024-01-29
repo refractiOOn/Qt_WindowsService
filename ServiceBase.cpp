@@ -88,15 +88,7 @@ void ServiceBase::WriteEventLogEntry(const std::wstring &message, WORD type)
     strings[0] = m_name.c_str();
     strings[1] = message.c_str();
 
-    ReportEventW(eventSource,
-                 type,
-                 0,
-                 0,
-                 NULL,
-                 2,
-                 0,
-                 strings,
-                 NULL);
+    ReportEventW(eventSource, type, 0, 0, NULL, 2, 0, strings, NULL);
     DeregisterEventSource(eventSource);
 }
 
