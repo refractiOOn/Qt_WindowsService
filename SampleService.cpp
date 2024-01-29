@@ -1,5 +1,7 @@
 #include "SampleService.hpp"
 #include "ThreadPool.hpp"
+#include <QSaveFile>
+#include <QStandardPaths>
 
 SampleService::SampleService(std::wstring serviceName,
                              bool canStop,
@@ -42,9 +44,23 @@ void SampleService::OnStop()
 
 void SampleService::ServiceWorkerThread()
 {
+    uint counter = 0;
+    const QByteArray data("Hello, world!");
+
     while (!m_stopping)
     {
-        ::Sleep(2000);
+        const QString fileName("C:/file_" + QString::number(counter) + ".txt");
+        QSaveFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            throw std::runtime_error("QSaveFile::open failed");
+        }
+
+        file.write(data);
+        file.commit();
+
+        ++counter;
+        ::Sleep(5000);
     }
     SetEvent(m_stoppedEvent);
 }
